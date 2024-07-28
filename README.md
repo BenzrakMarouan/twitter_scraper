@@ -35,7 +35,7 @@ This project is a Twitter scraper built using Selenium. It logs into Twitter, se
      ```
 
 4. **Download ChromeDriver:**
-   - Ensure you have the correct version of [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) matching your Chrome browser version.
+   - Ensure you have the correct version of [ChromeDriver]([https://sites.google.com/a/chromium.org/chromedriver/downloads](https://googlechromelabs.github.io/chrome-for-testing/)) matching your Chrome browser version.
    - Place the ChromeDriver executable in the specified path (`chromedriver-win64/chromedriver.exe`).
 
 ## Usage
