@@ -44,3 +44,18 @@ To run the Twitter scraper, use the following command:
 
 ```sh
 python main.py "your_search_query" 10 "latest"
+```
+Replace "your_search_query", 10, and "latest" with your desired search query, the number of posts to fetch, and the search type (latest or top).
+
+## Files
+
+config.py: Configuration file for storing credentials and paths.
+setup.py: Contains the setup for Selenium WebDriver.
+auth.py: Handles authentication and cookie management.
+scraper.py: Contains the functions to search Twitter and extract tweets.
+utils.py: Utility functions for loading and saving data.
+main.py: Main script to run the Twitter scraper.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue to discuss changes.
