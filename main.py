@@ -1,13 +1,17 @@
 import argparse
 import time
-from config import EMAIL, USERNAME, PASSWORD, COOKIES_FILE, JSON_FILE, CHROMEDRIVER_PATH
+from config import EMAIL, USERNAME, PASSWORD, COOKIES_FILE, JSON_FILE, CHROMEDRIVER_PATH, DB_FILE
 from setup import create_driver
 from auth import login_to_twitter, load_cookies
 from scraper import search_twitter, extract_tweets
-from utils import load_existing_data, save_to_json
+from database import create_connection, create_table, insert_tweet
+from tqdm import tqdm
 
 def main(query, num_posts, search_type):
     driver = create_driver(CHROMEDRIVER_PATH)
+    conn = create_connection(DB_FILE)
+    create_table(conn)
+    
     try:
         load_cookies(driver, COOKIES_FILE)
         
@@ -17,26 +21,19 @@ def main(query, num_posts, search_type):
 
         print("Successfully logged in to Twitter!")
 
-        existing_tweets = load_existing_data(JSON_FILE)
-        existing_texts = {tweet['text'] for tweet in existing_tweets}
-
         search_twitter(driver, query, search_type)
 
-        new_tweets = extract_tweets(driver, num_posts)
+        print(f"Fetching {num_posts} tweets...")
+        with tqdm(total=num_posts) as progress_bar:
+            new_tweets = extract_tweets(driver, num_posts, progress_bar)
 
-        unique_new_tweets = [tweet for tweet in new_tweets if tweet['text'] not in existing_texts]
+        for tweet in new_tweets:
+            insert_tweet(conn, tweet)
 
-        all_tweets = existing_tweets + unique_new_tweets
-        save_to_json(all_tweets, JSON_FILE)
-
-        print(f"Fetched {len(unique_new_tweets)} new unique tweets:")
-        for tweet in unique_new_tweets:
-            print(tweet)
-            print("------")
-
+        print(f"Fetched and saved {len(new_tweets)} new tweets.")
     finally:
-        time.sleep(5)
         driver.quit()
+        conn.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Twitter Scraper')
